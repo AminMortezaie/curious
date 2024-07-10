@@ -11,25 +11,25 @@ The development of quantum computers threatens current VPN cryptographic methods
 
 ## Key Points
 
-📌 **Quantum Threat**: Quantum computers pose a significant threat to current asymmetric cryptography used in VPNs.
+- **Quantum Threat**: Quantum computers pose a significant threat to current asymmetric cryptography used in VPNs.
 
-📌 **PQC Importance**: Post-quantum cryptography is essential to replace classical algorithms like RSA and ECDSA.
+- **PQC Importance**: Post-quantum cryptography is essential to replace classical algorithms like RSA and ECDSA.
 
-📌 **Orthogonal Methods**: Combining PQC with QKD and MKR offers a stronger defense against quantum attacks.
+- **Orthogonal Methods**: Combining PQC with QKD and MKR offers a stronger defense against quantum attacks.
 
-📌 **Lightweight Proxy**: A lightweight proxy can transparently tunnel IKE packets using combined symmetric keys.
+- **Lightweight Proxy**: A lightweight proxy can transparently tunnel IKE packets using combined symmetric keys.
 
-📌 **Security in Depth**: The proxy approach ensures security in depth, protecting VPN traffic even if PQC is compromised.
+- **Security in Depth**: The proxy approach ensures security in depth, protecting VPN traffic even if PQC is compromised.
 
-📌 **Entity Authentication**: Secure identification of VPN gateways is crucial for quantum-resistant VPNs.
+- **Entity Authentication**: Secure identification of VPN gateways is crucial for quantum-resistant VPNs.
 
-📌 **Confidentiality**: Client traffic confidentiality must be guaranteed end-to-end, even with intermediate gateways.
+- **Confidentiality**: Client traffic confidentiality must be guaranteed end-to-end, even with intermediate gateways.
 
-📌 **Data Integrity**: Protecting data integrity and preventing replay attacks are vital for secure VPN communication.
+- **Data Integrity**: Protecting data integrity and preventing replay attacks are vital for secure VPN communication.
 
-📌 **Key Synchronization**: A protocol for synchronizing symmetric keys between proxies is necessary for consistent security.
+- **Key Synchronization**: A protocol for synchronizing symmetric keys between proxies is necessary for consistent security.
 
-📌 **Persistent Key Storage**: Secure storage of symmetric keys and recovery methods are essential for maintaining VPN security.
+- **Persistent Key Storage**: Secure storage of symmetric keys and recovery methods are essential for maintaining VPN security.
 
 ## Summary
 
@@ -103,3 +103,50 @@ The authors propose a lightweight proxy concept to transparently secure Internet
 
 - **Future Work**: Further analysis and development of automatic key distribution methods are needed to streamline implementation and enhance security.
 
+### Background: Virtual Private Networks
+
+This section provides an overview of site-to-site VPN deployments and their underlying principles, focusing on the use of IPsec for secure communication over untrusted public networks.
+
+#### Site-to-Site VPN Deployment
+
+In a site-to-site VPN deployment, VPN gateways connect multiple trusted private networks through secure tunnels over an untrusted public network. Each site, such as a company office or public authority, has a VPN gateway that tunnels traffic securely from clients within the local private network to remote sites.
+
+*Figure 1: Example for a site-to-site VPN deployment: VPN gateways connect multiple (trusted) private networks via an untrusted public network by establishing secure tunnels.*
+
+![Figure 1](image1.jpg)
+
+#### IPsec Protocol Family
+
+The VPN operates at the network layer using the IPsec protocol family, which includes the Internet Key Exchange version 2 (IKEv2) for entity authentication and key exchange. IKEv2 is responsible for establishing security associations (SAs), which are then used by the Encapsulating Security Payload (ESP) to ensure the confidentiality and integrity of data within these tunnels.
+
+#### Security Associations (SAs)
+
+Established SAs form an overlay topology that dynamically determines the optimal routing and scalability of the VPN. This overlay topology can handle complex scenarios such as nested or load-balanced VPN gateways. Packets must still be protected end-to-end, even when some gateways cannot directly reach each other due to external firewalls or nested scenarios.
+
+#### Overlay Topology and Routing
+
+To implement highly scalable and robust VPNs, the topology control algorithm dynamically determines the overlay topology. This algorithm manages routing within the overlay, ensuring end-to-end protection by implementing nested SAs where necessary. The architecture of a VPN gateway includes a control plane for topology control and a data plane for routing client packets, as depicted in Figure 2 of the document.
+
+*Figure 2: Basic architecture of a VPN gateway: A topology control algorithm decides which SAs should be established and manages overlay routing. The IKE daemon is responsible for establishing SAs using an authenticated key exchange. The data plane uses the derived TEK to protect client packets using ESP and forwards them based on the routing decision. Dashed lines represent control flow, solid lines represent physical interfaces.*
+
+![Figure 2](image2.jpg)
+
+#### Conclusion
+
+The background section emphasizes the importance of a dynamic and secure overlay topology for the scalability and robustness of VPNs. It highlights the roles of IKEv2 for entity authentication and key exchange and ESP for ensuring data confidentiality and integrity. This foundation sets the stage for discussing the security enhancements needed to protect VPNs against quantum threats.
+
+### Key Points
+
+- **Site-to-Site VPN Deployment**: Connects multiple trusted private networks via secure tunnels over an untrusted public network.
+
+- **IPsec Protocol Family**: Utilizes IKEv2 for entity authentication and key exchange, and ESP for data confidentiality and integrity.
+
+- **Security Associations (SAs)**: Establishes an overlay topology that supports dynamic routing and scalability, protecting data end-to-end even in complex scenarios.
+
+- **Overlay Topology Control**: A topology control algorithm dynamically determines the optimal routing and scalability of the VPN.
+
+- **Nested SAs**: Ensures end-to-end protection by implementing nested SAs where necessary.
+
+- **VPN Gateway Architecture**: Includes a control plane for topology control and a data plane for routing client packets.
+
+- **Scalability and Robustness**: Emphasizes the importance of a dynamic and secure overlay topology for the scalability and robustness of VPNs.
