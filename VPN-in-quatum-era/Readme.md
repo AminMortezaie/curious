@@ -55,54 +55,56 @@ The development of quantum computers threatens current VPN cryptographic methods
 
 
 ## Introduction
-The authors propose a lightweight proxy concept to transparently secure Internet Key Exchange (IKE) protocol packets with available symmetric keys, ensuring a layered security approach. The remaining sections of the article elaborate on VPN principles, the proposed design, and its evaluation.
 
----
+Asymmetric cryptography serves as a fundamental component of modern virtual private networks (VPNs). However, current cryptographic algorithms face significant threats from attackers equipped with sufficiently powerful quantum computers, referred to as quantum attackers in this paper.
 
-### Summary
+#### Quantum Threat to Asymmetric Cryptography
 
-1. **Background on VPNs**: 
-   VPNs create secure tunnels over untrusted public networks. The paper focuses on site-to-site VPN deployments using IPsec protocol, which includes IKE for entity authentication and key exchange, and ESP for traffic encryption and integrity.
+Quantum computers have the potential to break classical algorithms like RSA and ECDSA, which are widely used in VPNs for secure communications. [**Shor's algorithm**](https://en.wikipedia.org/wiki/Shor%27s_algorithm), a well-known quantum algorithm, can efficiently solve problems that underpin the security of these classical cryptographic methods, making them vulnerable to quantum attacks.
 
-2. **Objectives and Threat Model**: 
-   The paper outlines the goals of a quantum-resistant VPN, emphasizing the need for entity authentication, confidentiality, data integrity, and replay protection. It assumes a strong Dolev-Yao attacker model with quantum computing capabilities.
+#### Post-Quantum Cryptography (PQC)
 
-3. **Related Work**: 
-   Existing methods for securing VPNs using PQC and symmetric key management techniques like pre-shared keys (PSKs), QKD, and MKR are discussed. Each method has limitations, necessitating a combined approach.
+Security agencies worldwide recommend adopting post-quantum cryptography (PQC) as a mandatory measure to counteract quantum threats. PQC algorithms are designed to be resistant to quantum attacks and can serve as drop-in replacements for classical algorithms within the Internet Key Exchange (IKE) protocol, specifically IKEv2, which is used for entity authentication and key exchange in VPNs.
 
-4. **IKE Proxy Design**: 
-   The authors present a lightweight proxy that intercepts IKE packets and secures them using combined symmetric keys from various sources. The design includes packet interception, a proxy header, dynamic address mapping, key synchronization, secure key storage, and TEK reinforcement.
+#### Challenges with PQC
 
-5. **Discussion**: 
-   The proposed proxy design enhances VPN security by providing layered protection and ensuring quantum resistance. The design's scalability, robustness, and minimal impact on performance are highlighted.
+Despite its promise, the field of PQC is relatively young, and the confidence in PQC implementations is not yet on par with that of classical algorithms from the pre-quantum era. Recent cryptanalysis efforts have uncovered flaws in some PQC algorithms, including former finalists in the National Institute of Standards and Technology (NIST) standardization process.
 
-6. **Conclusion**: 
-   The paper concludes that the IKE proxy approach strengthens VPN security without compromising existing functionalities. Future work includes formal analysis and exploring efficient key distribution methods.
+#### Orthogonal Methods for Quantum-Resistant Key Exchange
+
+Given the uncertainties surrounding PQC, this paper explores additional methods to secure VPNs against quantum attackers. These methods include:
+
+- **Quantum Key Distribution (QKD)**: Utilizes the principles of quantum mechanics to establish secure keys between parties.
+- **Multipath Key Reinforcement (MKR)**: Enhances security by distributing key shares across multiple paths in the network.
+
+#### Combined Approach for Maximum Security
+
+Each of these methods has its own limitations when used in isolation. Therefore, the paper advocates for a combined approach that leverages all available sources of symmetric key material to protect traffic within a VPN. 
+> The proposed solution involves a lightweight proxy that transparently tunnels IKE packets, securing them with a combination of symmetric keys, such as QKD and MKR keys, in addition to PQC.
+
+#### Security in Depth
+
+By combining various quantum-resistant key exchange methods, the proposed approach aims to provide security in depth. This means that even if one method is compromised, the overall security of the VPN remains intact due to the additional layers of protection.
 
 ---
 
 ### Key Points
 
-- **VPN Security**: Modern VPNs rely on asymmetric cryptography, which is vulnerable to quantum attacks.
+- **Asymmetric Cryptography**: Fundamental for modern VPNs but threatened by quantum computers.
   
-- **Post-Quantum Cryptography (PQC)**: PQC is essential for future-proofing VPNs against quantum threats but is currently less mature and efficient than classical cryptography.
+- **Quantum Threat**: Quantum attackers can break classical algorithms like RSA and ECDSA using quantum algorithms such as Shor's algorithm.
 
-- **Quantum Key Distribution (QKD)**: QKD provides secure key exchange by leveraging quantum mechanics, though it has practical limitations in network deployment.
+- **Post-Quantum Cryptography (PQC)**: Recommended by security agencies as a countermeasure, but still relatively immature and less trusted than classical algorithms.
 
-- **Multipath Key Reinforcement (MKR)**: MKR enhances security by distributing key shares across multiple paths, complicating eavesdropping efforts.
+- **Quantum Key Distribution (QKD)**: Uses quantum mechanics to securely establish keys between parties.
 
-- **IKE Proxy Design**: The proposed proxy transparently tunnels IKE packets, combining multiple symmetric key sources for enhanced security.
+- **Multipath Key Reinforcement (MKR)**: Distributes key shares across multiple network paths to enhance security.
 
-- **Dynamic Key Management**: The design includes dynamic address mapping and key synchronization to adapt to network changes.
+- **Combined Approach**: Advocates using all available symmetric key sources (QKD, MKR, PQC) to protect VPN traffic.
 
-- **Secure Key Storage**: Ensuring the persistence and security of keys during reboots and attacks is crucial.
+- **Lightweight Proxy**: Proposed solution involves a proxy that tunnels IKE packets, using a combination of symmetric keys for enhanced security.
 
-- **Scalability**: The proxy design is scalable, supporting numerous VPN gateways without performance degradation.
-
-- **Implementation Security**: The proxy's lightweight and focused design minimizes the increase in the trusted computing base and facilitates formal security analysis.
-
-- **Future Work**: Further analysis and development of automatic key distribution methods are needed to streamline implementation and enhance security.
-
+- **Security in Depth**: Ensures that even if one security method is compromised, overall VPN security remains robust.
 ## Background: Virtual Private Networks
 
 This section provides an overview of site-to-site VPN deployments and their underlying principles, focusing on the use of IPsec for secure communication over untrusted public networks.
@@ -150,7 +152,6 @@ The background section emphasizes the importance of a dynamic and secure overlay
 - **VPN Gateway Architecture**: Includes a control plane for topology control and a data plane for routing client packets.
 
 - **Scalability and Robustness**: Emphasizes the importance of a dynamic and secure overlay topology for the scalability and robustness of VPNs.
-
 ## Objectives and Threat Model
 
 This section defines the objectives for a quantum-resistant VPN and outlines the assumed threat model, considering the capabilities of quantum attackers.
