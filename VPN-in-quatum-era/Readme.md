@@ -103,7 +103,7 @@ The authors propose a lightweight proxy concept to transparently secure Internet
 
 - **Future Work**: Further analysis and development of automatic key distribution methods are needed to streamline implementation and enhance security.
 
-### Background: Virtual Private Networks
+## Background: Virtual Private Networks
 
 This section provides an overview of site-to-site VPN deployments and their underlying principles, focusing on the use of IPsec for secure communication over untrusted public networks.
 
@@ -150,3 +150,53 @@ The background section emphasizes the importance of a dynamic and secure overlay
 - **VPN Gateway Architecture**: Includes a control plane for topology control and a data plane for routing client packets.
 
 - **Scalability and Robustness**: Emphasizes the importance of a dynamic and secure overlay topology for the scalability and robustness of VPNs.
+
+## Objectives and Threat Model
+
+This section defines the objectives for a quantum-resistant VPN and outlines the assumed threat model, considering the capabilities of quantum attackers.
+
+#### Objectives
+
+A quantum-resistant VPN has the following enhanced objectives compared to conventional VPNs:
+
+1. **Entity Authentication**: Gateways must securely identify each other, and private IP address ranges must be securely linked to gateways.
+
+2. **Confidentiality**: The confidentiality of client traffic must be guaranteed. This includes end-to-end cryptographic protection of traffic routed via intermediate gateways and ensuring forward secrecy, so the compromise of long-term keys does not affect the confidentiality of past security associations (SAs).
+
+3. **Data Integrity and Replay Protection**: Unauthorized modification and replay of data packets must be detected and prevented.
+
+4. **Cryptographic Agility**: The cryptographic mechanisms should be easily exchangeable to adapt to new developments in cryptanalysis.
+
+5. **Non-Functional Properties**: Implementing quantum resistance should not degrade scalability, robustness to denial-of-service (DoS) attacks, graceful degradation in case of compromised devices, and implementation security.
+
+#### Threat Model
+
+The threat model assumes an exceptionally strong Dolev-Yao attacker with access to a sufficiently large quantum computer:
+
+- **External Attacker Capabilities**: The attacker can break classical asymmetric cryptography on controlled links, store traffic now and decrypt it later after finding flaws in PQC algorithms, and potentially compromise a limited number of VPN gateways or other security-critical entities like QKD devices.
+
+- **Assumptions about Attacker Limitations**: The attacker’s computational power and eavesdropping capabilities are limited, preventing them from breaking symmetric cryptographic primitives with adequate key sizes (≥ 256 bits) or eavesdropping on all links at all times.
+
+The threat model acknowledges the possibility of an attacker storing traffic for future decryption attempts and considers the need to protect against such long-term threats by ensuring robust forward secrecy and cryptographic agility.
+
+---
+
+### Key Points
+
+- **Entity Authentication**: Gateways must securely identify each other and link private IP addresses to gateways.
+  
+- **Confidentiality**: Ensures end-to-end protection of client traffic and maintains forward secrecy.
+
+- **Data Integrity and Replay Protection**: Detects and prevents unauthorized modification and replay of data packets.
+
+- **Cryptographic Agility**: Allows for easy exchange of cryptographic mechanisms to adapt to new threats.
+
+- **Non-Functional Properties**: Maintains scalability, robustness to DoS attacks, graceful degradation, and implementation security while introducing quantum resistance.
+
+- **Dolev-Yao Attacker Model**: Assumes a strong attacker with quantum computing capabilities, able to break classical cryptography and store traffic for future decryption.
+
+- **Attacker Limitations**: The attacker's ability to break symmetric cryptographic primitives and eavesdrop on all links is limited by computational power and resources.
+
+- **Protection Against Long-Term Threats**: Emphasizes the importance of forward secrecy and cryptographic agility to guard against future decryption attempts.
+
+---
