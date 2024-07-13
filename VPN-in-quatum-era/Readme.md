@@ -370,3 +370,69 @@ The TEK derived by IKE is implicitly protected by the cryptographic tunnel. For 
 - **Cryptographic Tunnel**: Provides security in depth by protecting IKE packets with multiple layers of encryption.
 
 - **Scalability**: Proxy design supports numerous VPN gateways without performance degradation.
+
+## Discussion
+
+This section evaluates the IKE proxy approach in relation to the objectives defined in Section 3, discussing its impact on various aspects such as entity authentication, confidentiality, data integrity, cryptographic agility, scalability, robustness, graceful degradation, and implementation security.
+
+#### Entity Authentication
+
+If the IKE daemon's combination of post-quantum cryptography (PQC) and classical digital signature schemes is secure, entity authentication will be quantum-resistant. The design does not modify the IKE protocol, ensuring that once the proxy synchronizes at least one symmetric key unknown to the attacker, all following master keys provide authenticity. This prevents external attackers from exploiting potential flaws in the PQC signature scheme to impersonate gateways.
+
+#### Confidentiality
+
+The confidentiality of client traffic is protected by the TEK derived by IKE, which uses a hybrid key exchange combining PQC and classical methods. Attackers might store IKE exchanges and client traffic now, hoping to decrypt them later if a flaw is found in the PQC algorithm. However, if the IKE and the final TEK are protected by a master key unknown to the attacker, the cost of such "store now, decrypt later" attacks increases significantly.
+
+**Protection Layers**:
+1. **Static Group Key**: Forces attackers to compromise at least one gateway.
+2. **QKD Keys**: Secure if adjacent QKD devices are uncompromised and the classical channel is authenticated.
+3. **Pairwise PSKs**: Requires compromising one of the adjacent gateways.
+4. **MKR Keys**: Forces attackers to decrypt multiple SAs and paths, especially if some paths are protected by QKD.
+
+#### Data Integrity and Replay Protection
+
+Unauthorized modification or replay of client and key synchronization packets is detected if the attackers do not know the TEK. The TEK is protected by PQC exchanges within the IKE protocol and further reinforced by the proxy’s master key, ensuring robust data integrity and replay protection.
+
+#### Cryptographic Agility
+
+The IKE proxy can synchronize symmetric key material from various sources and easily exchange the symmetric authenticated encryption scheme used to protect IKE packets due to the algorithm ID in the proxy header. This flexibility allows the proxy to adapt to changes in cryptographic requirements without modifying IKE or its configuration.
+
+#### Scalability
+
+The IKE proxy, relying solely on symmetric cryptography, poses no performance bottleneck for establishing or rekeying thousands of SAs. Memory and disk consumption scale linearly with the number of gateways in the VPN. Old key material and master keys can be deleted after successful key synchronization, ensuring efficient resource use.
+
+#### Robustness to DoS Attacks
+
+The IKE proxy is resilient to denial-of-service (DoS) attacks due to its use of symmetric cryptography and minimal storage requirements per remote gateway. Simple request/reply mechanisms in the greeting and key synchronization protocols prevent amplification attacks. The protocol only synchronizes key material identical at both ends, ensuring attackers cannot force master keys out of sync.
+
+#### Graceful Degradation
+
+Compromising the IKE proxy does not introduce vulnerabilities beyond those possible by compromising other gateway components, such as the IKE daemon. The proxy’s design ensures no new attack vectors are introduced, maintaining overall system integrity.
+
+#### Implementation Security
+
+The proxy’s lightweight design and exclusive use of symmetric cryptography allow for a small implementation, adding minimal complexity to the trusted computing base. A small implementation facilitates formal security analysis. The master keys’ protection reduces the attack surface via public channels compared to an IKE daemon operating without a proxy.
+
+---
+
+### Key Points
+
+- **Entity Authentication**: Ensures quantum-resistant authentication without modifying the IKE protocol.
+
+- **Confidentiality**: Protects client traffic with layered security, making decryption attacks more expensive and difficult.
+
+- **Data Integrity and Replay Protection**: Detects unauthorized modifications and replays if the TEK is secure.
+
+- **Cryptographic Agility**: Allows easy exchange of cryptographic mechanisms, adapting to new threats.
+
+- **Scalability**: Efficiently handles thousands of SAs without performance bottlenecks, scaling resources as needed.
+
+- **Robustness to DoS Attacks**: Resilient to DoS attacks due to minimal storage requirements and symmetric cryptography.
+
+- **Graceful Degradation**: Maintains overall system integrity even if the IKE proxy is compromised.
+
+- **Implementation Security**: Small, focused implementation facilitates formal security analysis and reduces the attack surface.
+
+- **Layered Security**: Combines multiple sources of symmetric key material for enhanced protection.
+
+- **Dynamic Key Management**: Supports dynamic address mapping and key synchronization to adapt to network changes.
