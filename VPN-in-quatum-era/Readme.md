@@ -199,5 +199,69 @@ The threat model acknowledges the possibility of an attacker storing traffic for
 - **Attacker Limitations**: The attacker's ability to break symmetric cryptographic primitives and eavesdrop on all links is limited by computational power and resources.
 
 - **Protection Against Long-Term Threats**: Emphasizes the importance of forward secrecy and cryptographic agility to guard against future decryption attempts.
+## Related Work
+
+This section discusses the two-step process of implementing security services (entity authentication, confidentiality, and data integrity) in VPNs with IPsec, focusing on authenticated key exchange and authenticated encryption. The section then reviews various approaches to achieving quantum-resistant VPNs, including post-quantum cryptography (PQC) and symmetric key management methods.
+
+#### Authenticated Key Exchange and Authenticated Encryption
+
+1. **Authenticated Key Exchange**: Establishing a new Security Association (SA) between two VPN gateways involves mutual authentication and the derivation of a new symmetric Traffic Encryption Key (TEK).
+
+2. **Authenticated Encryption**: Using the derived TEK, gateways encrypt all client packets and add authentication tags to protect their integrity.
+
+Since symmetric cryptography with sufficiently large keys (≥ 256 bits) remains secure in the quantum era, only the authenticated key exchange needs to be adapted to ensure quantum resistance. This can be achieved using PQC or symmetric cryptography.
+
+#### Post-Quantum Cryptography (PQC)
+
+PQC algorithms can serve as drop-in replacements for classical asymmetric cryptographic methods like RSA, ECDSA, and Diffie-Hellman key exchange. Several PQC algorithms are being standardized by NIST, including three signature schemes and one key encapsulation mechanism (KEM).
+
+However, PQC has its drawbacks:
+
+- **Efficiency**: PQC algorithms are generally less efficient than classical elliptic curve cryptography, leading to higher computational overhead and larger key and signature sizes.
+- **Maturity**: The cryptanalysis of PQC algorithms is not as mature, as evidenced by recent discoveries of flaws in NIST's former finalists.
+
+As a result, hybrid modes that combine classical and PQC algorithms are recommended for authenticated key exchanges.
+
+#### Symmetric Key Management
+
+An alternative approach to achieve quantum resistance involves using symmetric key management methods, such as pre-shared keys (PSKs), quantum key distribution (QKD), and multipath key reinforcement (MKR).
+
+1. **Pre-Shared Keys (PSKs)**: Pairwise PSKs can be deployed between gateways, but managing and updating PSKs is cumbersome. Static group keys provide convenience but are insecure if any gateway is compromised.
+
+2. **Quantum Key Distribution (QKD)**: QKD uses qubits for key exchange, providing security based on quantum mechanics principles. However, QKD is limited by the need for direct optical connections and high operational costs. Trusted nodes can relay QKD keys over longer distances but do not provide end-to-end security.
+
+3. **Multipath Key Reinforcement (MKR)**: MKR splits keys into shares and transmits them over different paths, increasing the security if attackers cannot eavesdrop on all paths. MKR can be combined with QKD for enhanced security.
+
+#### Using PSKs in IPsec
+
+Externally exchanged keys, such as those derived from QKD and MKR, can be considered PSKs in IKE. Extensions to IKEv2 allow the incorporation of PSKs into TEKs, protecting IKE packets and reducing metadata leakage. However, this approach does not address potential flaws in IKE implementations.
+
+Some proposals suggest using only QKD keys, completely replacing IKE, but this is currently ruled out by various national security agencies.
+
+#### Lessons Learned
+
+PQC is a mandatory approach to secure VPNs against quantum threats, and it should be combined with pairwise PSKs for added protection. Each method of exchanging PSKs has limitations, so a flexible mechanism to combine all symmetric keys is desirable. Extending IKE to handle this combination increases complexity, so a separate lightweight component for managing symmetric keys is recommended.
 
 ---
+
+### Key Points
+
+- **Authenticated Key Exchange**: Establishes mutual authentication and derives new symmetric keys between VPN gateways.
+  
+- **Authenticated Encryption**: Protects client packets using the derived symmetric keys and authentication tags.
+
+- **Post-Quantum Cryptography (PQC)**: Serves as a replacement for classical cryptography but has efficiency and maturity issues.
+
+- **Hybrid Modes**: Combine classical and PQC algorithms to enhance security.
+
+- **Symmetric Key Management**: Includes methods like PSKs, QKD, and MKR for achieving quantum-resistant VPNs.
+
+- **Pre-Shared Keys (PSKs)**: Convenient but challenging to manage and insecure if compromised.
+
+- **Quantum Key Distribution (QKD)**: Secure but limited by optical connection requirements and high costs.
+
+- **Multipath Key Reinforcement (MKR)**: Enhances security by transmitting key shares over multiple paths.
+
+- **Incorporating PSKs in IPsec**: Extensions to IKEv2 allow using PSKs to protect IKE packets, reducing metadata leakage.
+
+- **Flexible Mechanism**: A separate lightweight component for managing symmetric keys is recommended to avoid increasing IKE complexity.
